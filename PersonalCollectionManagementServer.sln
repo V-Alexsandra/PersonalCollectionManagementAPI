@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersonalCollectionManagementAPI", "PersonalCollectionManagementAPI\PersonalCollectionManagementAPI.csproj", "{65E296C0-EE4E-4D6F-8F56-86FB3743588F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalCollectionManagement.Data", "PersonalCollectionManagement.Data\PersonalCollectionManagement.Data.csproj", "{99A36B14-B816-46D0-B324-7A5828E06BB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersonalCollectionManagement.Data", "PersonalCollectionManagement.Data\PersonalCollectionManagement.Data.csproj", "{99A36B14-B816-46D0-B324-7A5828E06BB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalCollectionManagement.Business", "PersonalCollectionManagement.Business\PersonalCollectionManagement.Business.csproj", "{470E7E15-3283-4320-92BB-DB343B406D4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{99A36B14-B816-46D0-B324-7A5828E06BB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99A36B14-B816-46D0-B324-7A5828E06BB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99A36B14-B816-46D0-B324-7A5828E06BB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{470E7E15-3283-4320-92BB-DB343B406D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{470E7E15-3283-4320-92BB-DB343B406D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{470E7E15-3283-4320-92BB-DB343B406D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{470E7E15-3283-4320-92BB-DB343B406D4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

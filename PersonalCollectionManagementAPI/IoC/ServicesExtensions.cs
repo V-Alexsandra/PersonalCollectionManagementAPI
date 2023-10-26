@@ -1,8 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PersonalCollectionManagement.Business.Services.Common;
+using PersonalCollectionManagement.Business.Services.Implementation;
 using PersonalCollectionManagement.Data.Contexts;
+using PersonalCollectionManagement.Data.Entities;
+using PersonalCollectionManagement.Data.Repositories.Contracts;
+using PersonalCollectionManagement.Data.Repositories.Implementation;
+using System.Reflection;
 using System.Text;
 
 namespace PersonalCollectionManagementAPI.IoC
@@ -20,13 +27,12 @@ namespace PersonalCollectionManagementAPI.IoC
 
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<UserEntity, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 5;
-                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -54,58 +60,41 @@ namespace PersonalCollectionManagementAPI.IoC
 
             return services;
         }
+        public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
 
+            return services;
+        }
 
-        //public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
+        //public static IServiceCollection ConfigureAutoMapper(this IServiceCollection services)
         //{
-        //    services.AddScoped<IUserRepository, UserRepository>();
+        //    services.AddAutoMapper(typeof(PriceHistoryProfile));
+        //    services.AddAutoMapper(typeof(ProductProfile));
 
         //    return services;
         //}
 
-        //public static IServiceCollection ConfigureServices(this IServiceCollection services)
-        //{
-        //    services.AddScoped<IUserService, UserService>();
-        //    services.AddScoped<ITokenService, TokenService>();
+        public static IServiceCollection ConfigureServices(this IServiceCollection services)
+        {
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
 
-        //    return services;
-        //}
+            return services;
+        }
 
-        //public static IServiceCollection ConfigureFluentValidation(this IServiceCollection services)
-        //{
-        //    services.AddFluentValidation(options =>
-        //    {
-        //        options.ImplicitlyValidateChildProperties = true;
-        //        options.ImplicitlyValidateRootCollectionElements = true;
+        public static IServiceCollection ConfigureFluentValidation(this IServiceCollection services)
+        {
+            services.AddFluentValidation(options =>
+            {
+                options.ImplicitlyValidateChildProperties = true;
+                options.ImplicitlyValidateRootCollectionElements = true;
 
-        //        options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        //    });
+                options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            });
 
-        //    return services;
-        //}
+            return services;
+        }
 
-        //public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddAuthentication(auth =>
-        //    {
-        //        auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //        auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    }).AddJwtBearer(options =>
-        //    {
-        //        options.RequireHttpsMetadata = false;
-        //        options.SaveToken = true;
-        //        options.TokenValidationParameters = new TokenValidationParameters()
-        //        {
-        //            ValidAudience = configuration["AuthSettings:Audience"],
-        //            ValidIssuer = configuration["AuthSettings:Issuer"],
-        //            RequireExpirationTime = true,
-        //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AuthSettings:Key"])),
-        //            ValidateIssuerSigningKey = true,
-        //            ValidateLifetime = true
-        //        };
-        //    });
-
-        //    return services;
-        //}
     }
 }

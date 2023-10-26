@@ -11,6 +11,10 @@ var configuration = new ConfigurationBuilder()
 builder.Services.ConfigureSqlContext(configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureAuthentication(configuration);
+builder.Services.ConfigureRepositories();
+builder.Services.ConfigureFluentValidation();
+builder.Services.ConfigureServices();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
