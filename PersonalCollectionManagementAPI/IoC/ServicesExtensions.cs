@@ -11,6 +11,7 @@ namespace PersonalCollectionManagementAPI.IoC
     {
         public static IServiceCollection ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 

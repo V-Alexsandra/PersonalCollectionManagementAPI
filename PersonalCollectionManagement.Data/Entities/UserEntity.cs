@@ -4,7 +4,11 @@ namespace PersonalCollectionManagement.Data.Entities
 {
     public class UserEntity : IdentityUser
     {
-        public string? Language { get; set; }
-        public string? Theme { get; set; }
+        public string Language { get; set; } = null!;
+        public string Theme { get; set; } = null!;
+
+        public IEnumerable<CollectionEntity> Collections { get; set; } = null!;
+        public IEnumerable<LikeEntity> Likes { get; set; } = null!;
+        public IEnumerable<CommentEntity> Comments { get; set; } = null!;
     }
 }
