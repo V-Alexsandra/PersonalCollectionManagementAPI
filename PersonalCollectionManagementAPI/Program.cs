@@ -1,3 +1,4 @@
+using IdentityMS.Data;
 using PersonalCollectionManagementAPI.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +39,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("CorsPolicy");
+
+await app.SeedDataAsync();
 
 app.UseHttpsRedirection();
 

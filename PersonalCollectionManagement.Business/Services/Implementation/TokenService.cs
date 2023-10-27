@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
 using PersonalCollectionManagement.Data.Entities;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -30,10 +31,20 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
                 throw new NotFoundException(nameof(user));
             }
 
+            var userroles = await _userManager.GetRolesAsync(user);
+
+            if (userroles == null)
+            {
+                throw new NotFoundException(nameof(userroles));
+            }
+
+            var userrole = userroles[0];
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Role, userrole)
             };
 
             return claims;

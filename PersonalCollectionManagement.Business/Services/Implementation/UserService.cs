@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PersonalCollectionManagement.Business.DTOs.UserDtos;
 using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
 using PersonalCollectionManagement.Data.Entities;
+using System.Runtime.CompilerServices;
 
 namespace PersonalCollectionManagement.Business.Services.Implementation
 {
@@ -29,7 +31,7 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             if (model.Password == model.RepeatPassword)
             {
                 var result = await CreateUserAsync(model);
-
+               
                 if (!result.Succeeded)
                 {
                     throw new NotSucceededException("Register failed");
@@ -56,10 +58,17 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             var identityUser = new UserEntity
             {
                 Email = model.Email,
-                UserName = model.Email
+                UserName = model.Name,
+                Theme = "light",
+                Language = "en"
             };
 
             var result = await _userManager.CreateAsync(identityUser, model.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(identityUser, "User");
+            }
 
             return result;
         }
@@ -71,7 +80,7 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
                 throw new ArgumentNullException(nameof(model), "LoginUserDto Model is null");
             }
 
-            var user = await FindUserAsync(model);
+            var user = await FindUserByEmailAsync(model);
 
             await TryLoginAsync(user, model);
 
@@ -82,7 +91,7 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             };
         }
 
-        public async Task<UserEntity> FindUserAsync(LoginUserDto model)
+        public async Task<UserEntity> FindUserByEmailAsync(LoginUserDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
@@ -96,6 +105,13 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
 
         public async Task TryLoginAsync(UserEntity user, LoginUserDto model)
         {
+            var canLogin = await CanUserLogin(user.Id);
+
+            if (!canLogin)
+            {
+                throw new NotSucceededException("Your account is temporarily blocked. If you believe this was an error, please contact your administrator.");
+            }
+
             var result = await _userManager.CheckPasswordAsync(user, model.Password);
 
             if (!result)
@@ -103,27 +119,57 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
                 throw new NotSucceededException("Invalid password");
             }
         }
+        
+        public async Task<bool> CanUserLogin(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+
+            return !user.IsBlocked;
+        }
+
 
         public async Task ChangeUserNameAsync(string userName, string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-            {
-                throw new NotFoundException("User not found");
-            }
+            var user = await GetUserByIdAsync(id);
 
             user.UserName = userName;
+
+            await UpdateUserAsync(user);
+        }
+
+        public async Task UpdateUserAsync(UserEntity user)
+        {
             IdentityResult result = await _userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
             {
-                throw new NotSucceededException($"Failed to change user name with id {id}");
+                throw new NotSucceededException($"Failed to update user");
             }
         }
 
         public async Task<ProfileDto> GetUserProfileAsync(string id)
         {
+            var user = await GetUserByIdAsync(id);
+
+            return new ProfileDto
+            {
+                UserName = user.UserName,
+                UserEmail = user.Email,
+                UserTheme = user.Theme,
+                UserLanguage = user.Language
+            };
+        }
+
+        public async Task ChangeUserThemeAsync(string theme, string id)
+        {
+            var user = await GetUserByIdAsync(id);
+            user.Theme = theme;
+
+            await UpdateUserAsync(user);
+        }
+
+        public async Task<UserEntity> GetUserByIdAsync(string id)
+        {
             var user = await _userManager.FindByIdAsync(id);
 
             if (user == null)
@@ -131,11 +177,70 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
                 throw new NotFoundException("User not found");
             }
 
-            return new ProfileDto
-            {
-                UserName = user.UserName,
-                UserEmail = user.Email
-            };
+            return user;
+        }
+
+        public async Task ChangeUserLanguageAsync(string language, string id)
+        {
+            var user = await GetUserByIdAsync(id);
+            user.Language = language;
+
+            await UpdateUserAsync(user);
+        }
+
+        public async Task<IEnumerable<UserEntity>> GetAllUsersAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return users;
+        }
+
+        public async Task BlockUserAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+
+            user.IsBlocked = true;
+
+            await UpdateUserAsync(user);
+        }
+
+        public async Task UnblockUserAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+            
+            user.IsBlocked = false;
+              
+            await UpdateUserAsync(user);
+        }
+
+        public async Task DeleteUserAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+
+            await _userManager.DeleteAsync(user);
+        }
+
+        public async Task<bool> ChangeUserRoleToAdminAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            var result = await _userManager.AddToRoleAsync(user, "Admin");
+
+            return result.Succeeded;
+        }
+
+        public async Task<bool> ChangeUserRoleToUserAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            var result = await _userManager.AddToRoleAsync(user, "User");
+
+            return result.Succeeded;
         }
     }
 }
