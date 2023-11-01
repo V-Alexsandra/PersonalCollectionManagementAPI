@@ -7,14 +7,16 @@ namespace PersonalCollectionManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITopicService _topicService;
 
-        public AdminController(IUserService userService)
+        public AdminController(IUserService userService, ITopicService topicService)
         {
             _userService = userService;
+            _topicService = topicService;
         }
 
         [HttpGet]
@@ -134,6 +136,44 @@ namespace PersonalCollectionManagementAPI.Controllers
                 {
                     return StatusCode(500, "Internal Server Error.");
                 }
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpDelete]
+        [Route("deletetopic/{id}")]
+        public async Task<IActionResult> DeleteTopicAsync(int id)
+        {
+            try
+            {
+                await _topicService.DeleteTopicAsync(id);
+                return Ok("Topic deleted.");
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpPost]
+        [Route("createtopic")]
+        public async Task<IActionResult> CreateTopicAsync(string name)
+        {
+            try
+            {
+                await _topicService.CreateTopicAsync(name);
+                return Ok("Topic created.");
             }
             catch (NotFoundException ex)
             {

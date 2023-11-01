@@ -127,7 +127,6 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             return !user.IsBlocked;
         }
 
-
         public async Task ChangeUserNameAsync(string userName, string id)
         {
             var user = await GetUserByIdAsync(id);
@@ -189,9 +188,8 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         }
 
         public async Task<IEnumerable<UserEntity>> GetAllUsersAsync()
-        {
-            var users = await _userManager.Users.ToListAsync();
-            return users;
+        { 
+            return await _userManager.Users.ToListAsync(); 
         }
 
         public async Task BlockUserAsync(string id)

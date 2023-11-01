@@ -14,6 +14,7 @@ namespace PersonalCollectionManagement.Data.Entities
         public int TopicId { get; set; }
 
         public IEnumerable<ItemEntity> Items { get; set; } = null!;
+        public IEnumerable<CollectionFieldEntity> CollectionFields { get; set; } = null!;
 
         public string? ImageLink { get; set; }
     }

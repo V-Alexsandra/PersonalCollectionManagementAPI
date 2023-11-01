@@ -63,22 +63,26 @@ namespace PersonalCollectionManagementAPI.IoC
         public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICollectionRepository, CollectionRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<ILikeRepository, LikeRepository>();
+            services.AddScoped<ITopicRepository, TopicRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<ICollectionFieldRepository, CollectionFieldRepository>();
 
             return services;
         }
-
-        //public static IServiceCollection ConfigureAutoMapper(this IServiceCollection services)
-        //{
-        //    services.AddAutoMapper(typeof(PriceHistoryProfile));
-        //    services.AddAutoMapper(typeof(ProductProfile));
-
-        //    return services;
-        //}
 
         public static IServiceCollection ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICollectionService, CollectionService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<ILikeService, LikeService>();
+            services.AddScoped<ITopicService, TopicService>();
 
             return services;
         }

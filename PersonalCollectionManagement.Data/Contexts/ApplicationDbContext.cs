@@ -9,7 +9,9 @@ namespace PersonalCollectionManagement.Data.Contexts
     {
         public DbSet<UserEntity> Users { get; set; } = null!;
         public DbSet<CollectionEntity> Collections { get; set; } = null!;
-        public DbSet<FieldEntity> Fields { get; set; } = null!;
+        public DbSet<ItemFieldValueEntity> ItemFieldValues { get; set; } = null!;
+        public DbSet<TagEntity> Tags { get; set; } = null!;
+        public DbSet<CollectionFieldEntity> CollectionFields { get; set; } = null!;
         public DbSet<CommentEntity> Comments { get; set; } = null!;
         public DbSet<ItemEntity> Items { get; set; } = null!;
         public DbSet<LikeEntity> Likes { get; set; } = null!;
