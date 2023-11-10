@@ -11,10 +11,11 @@ namespace PersonalCollectionManagement.Business.Services.Common
 {
     public interface IItemService
     {
-        Task<IEnumerable<ItemEntity>> GetAllAync();
+        Task<IEnumerable<ItemEntity>> GetAllAsync();
         Task CreateItemAsync(ItemForCreationDto model);
-        Task UpdateItemAsync(ItemForUpdateDto model);
+        //Task UpdateItemAsync(ItemForUpdateDto model);
         Task<ItemEntity> GetItemByIdAsync(int id);
         Task DeleteItemnAsync(int id);
+        Task<IEnumerable<ItemEntity>> GetAllCollectionItemsAsync(int id);
     }
 }

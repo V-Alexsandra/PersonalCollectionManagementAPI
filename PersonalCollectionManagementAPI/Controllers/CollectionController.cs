@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PersonalCollectionManagement.Business.DTOs.CollectionDtos;
 using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
-using PersonalCollectionManagement.Business.Services.Implementation;
-using System.Data;
 
 namespace PersonalCollectionManagementAPI.Controllers
 {
@@ -136,6 +133,10 @@ namespace PersonalCollectionManagementAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, "Internal Server Error.");
@@ -151,6 +152,22 @@ namespace PersonalCollectionManagementAPI.Controllers
                 var collection = await _collectionService.GetCollectionByIdAsync(id);
 
                 return Ok(collection);
+            }
+            catch (NotSucceededException e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("topoicbyid/{id}")]
+        public async Task<IActionResult> GetTopicByIdAsync(int id)
+        {
+            try
+            {
+                var topic = await _topicService.GetByTopicIdAsync(id);
+
+                return Ok(topic);
             }
             catch (NotSucceededException e)
             {

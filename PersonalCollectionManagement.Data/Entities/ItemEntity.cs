@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PersonalCollectionManagement.Data.Entities
+﻿namespace PersonalCollectionManagement.Data.Entities
 {
     public class ItemEntity : BaseEntity
     {

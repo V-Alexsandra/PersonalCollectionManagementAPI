@@ -32,5 +32,10 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         {
             return await _topicRepository.GetAllAsync();
         }
+
+        public async Task<TopicEntity> GetByTopicIdAsync(int id)
+        {
+            return await _topicRepository.GetByIdAsync(id);
+        }
     }
 }

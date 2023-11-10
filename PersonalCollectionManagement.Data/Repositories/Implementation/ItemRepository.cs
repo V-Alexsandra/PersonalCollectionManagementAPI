@@ -1,4 +1,5 @@
-﻿using PersonalCollectionManagement.Data.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using PersonalCollectionManagement.Data.Contexts;
 using PersonalCollectionManagement.Data.Entities;
 using PersonalCollectionManagement.Data.Repositories.Contracts;
 
@@ -6,6 +7,22 @@ namespace PersonalCollectionManagement.Data.Repositories.Implementation
 {
     public class ItemRepository : BaseRepository<ItemEntity>, IItemRepository
     {
-        public ItemRepository(IApplicationDbContext appContext) : base(appContext) {}
+        protected IApplicationDbContext appContext;
+        protected DbSet<ItemEntity> DbSet;
+
+        public ItemRepository(IApplicationDbContext appContext) : base(appContext) 
+        {
+            DbSet = appContext.Set<ItemEntity>();
+        }
+
+        public async Task<IEnumerable<ItemEntity>> GetAllCollectionItemsAsync(int id)
+        {
+            var collectionsItems = await DbSet
+                .AsNoTracking()
+                .Where(i => i.CollectionId == id)
+                .ToListAsync();
+
+            return collectionsItems;
+        }
     }
 }

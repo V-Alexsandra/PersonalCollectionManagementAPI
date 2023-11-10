@@ -8,8 +8,8 @@ namespace PersonalCollectionManagement.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<LikeEntity> builder)
         {
-            builder.HasKey(l => l.Id);
-            builder.Property(l => l.Id)
+            builder.HasKey(c => c.Id);
+            builder.Property(c => c.Id)
                 .UseIdentityColumn(1, 1)
                 .ValueGeneratedOnAdd();
 

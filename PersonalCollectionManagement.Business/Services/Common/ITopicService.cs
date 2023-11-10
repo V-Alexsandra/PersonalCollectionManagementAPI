@@ -7,5 +7,6 @@ namespace PersonalCollectionManagement.Business.Services.Common
         Task CreateTopicAsync(string name);
         Task DeleteTopicAsync(int id);
         Task<IEnumerable<TopicEntity>> GetAllAsync();
+        Task<TopicEntity> GetByTopicIdAsync(int id);
     }
 }

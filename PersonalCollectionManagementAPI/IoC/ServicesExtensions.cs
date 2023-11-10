@@ -70,6 +70,7 @@ namespace PersonalCollectionManagementAPI.IoC
             services.AddScoped<ITopicRepository, TopicRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ICollectionFieldRepository, CollectionFieldRepository>();
+            services.AddScoped<IItemFieldValueRepository, ItemFieldValueRepository>();
 
             return services;
         }
