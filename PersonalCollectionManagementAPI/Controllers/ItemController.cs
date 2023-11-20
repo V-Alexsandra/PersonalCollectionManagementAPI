@@ -124,5 +124,93 @@ namespace PersonalCollectionManagementAPI.Controllers
                 return StatusCode(500, "Internal Server Error.");
             }
         }
+
+        [HttpGet]
+        [Route("alltags")]
+        //[Autorize]
+        public async Task<IActionResult> GetAllTagsAsync()
+        {
+            try
+            {
+                var topics = await _itemService.GetAllTagsAsync();
+                return Ok(topics);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpPut]
+        [Route("update")]
+        //[Authorize]
+        public async Task<IActionResult> UpdateItemAsync([FromBody] ItemForUpdateDto model)
+        {
+            try
+            {
+                await _itemService.UpdateItemAsync(model);
+                return Ok("Item updated.");
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotSucceededException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("updateTags")]
+        //[Authorize]
+        public async Task<IActionResult> UpdateTagsAsync([FromBody] TagForUpdateDto model)
+        {
+            try
+            {
+                await _itemService.UpdateTagsEntities(model);
+                return Ok("Tag updated.");
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotSucceededException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getlastaddeditems")]
+        //[Authorize]
+        public async Task<IActionResult> GetLastAddedItems()
+        {
+            try
+            {
+                var items = await _itemService.GetLastAddedItemsAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

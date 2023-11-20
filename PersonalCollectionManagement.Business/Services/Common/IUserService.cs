@@ -25,5 +25,7 @@ namespace PersonalCollectionManagement.Business.Services.Common
         Task DeleteUserAsync(string id);
         Task<bool> ChangeUserRoleToAdminAsync(string id);
         Task<bool> ChangeUserRoleToUserAsync(string id);
+        Task<string> GetUserThemeAsync(string id);
+        Task<string> GetUserRoleAsync(string id);
     }
 }

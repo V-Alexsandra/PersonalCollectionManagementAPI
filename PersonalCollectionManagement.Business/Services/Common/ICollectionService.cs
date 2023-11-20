@@ -12,5 +12,8 @@ namespace PersonalCollectionManagement.Business.Services.Common
         Task<IEnumerable<CollectionEntity>> GetFivaLargestAsync();
         Task<int> GetTopicIdAsync(string topic);
         Task<IEnumerable<CollectionEntity>> GetAllUsersCollectionsAsync(string userId);
+        Task <IEnumerable<CollectionFieldEntity>> GetAllFieldsAsync(int id);
+        Task<IEnumerable<ItemFieldValueEntity>> GetAllFieldValuesAsync(int id);
+        Task UpdateCollectionAsync(CollectionForUpdateDto model);
     }
 }

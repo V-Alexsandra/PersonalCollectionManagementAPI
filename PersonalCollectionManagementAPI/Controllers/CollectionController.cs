@@ -153,9 +153,17 @@ namespace PersonalCollectionManagementAPI.Controllers
 
                 return Ok(collection);
             }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (NotSucceededException e)
             {
                 return BadRequest(e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
             }
         }
 
@@ -169,9 +177,81 @@ namespace PersonalCollectionManagementAPI.Controllers
 
                 return Ok(topic);
             }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (NotSucceededException e)
             {
                 return BadRequest(e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpGet]
+        [Route("collectionfields/{id}")]
+        public async Task<IActionResult> GetCollectionFieldsAsync(int id)
+        {
+            try
+            {
+                var collectionFields = await _collectionService.GetAllFieldsAsync(id);
+
+                return Ok(collectionFields);
+            }
+            catch (NotSucceededException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpGet]
+        [Route("fieldvalues/{id}")]
+        public async Task<IActionResult> GetFieldValuesAsync(int id)
+        {
+            try
+            {
+                var fieldValues = await _collectionService.GetAllFieldValuesAsync(id);
+
+                return Ok(fieldValues);
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpPut]
+        [Route("updatecollection")]
+        //[Autorize]
+        public async Task<IActionResult> UpdateCollectionAsync(CollectionForUpdateDto model)
+        {
+            try
+            {
+                await _collectionService.UpdateCollectionAsync(model);
+                return Ok("Collection Updated.");
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
             }
         }
     }

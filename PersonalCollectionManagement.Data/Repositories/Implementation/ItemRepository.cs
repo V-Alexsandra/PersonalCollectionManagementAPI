@@ -24,5 +24,16 @@ namespace PersonalCollectionManagement.Data.Repositories.Implementation
 
             return collectionsItems;
         }
+
+        public async Task<IEnumerable<ItemEntity>> GetLastAddedItemsAsync()
+        {
+            var collectionsItems = await DbSet
+                .AsNoTracking()
+                .OrderByDescending(c => c.CreationDate)
+                .Take(20)
+                .ToListAsync();
+
+            return collectionsItems;
+        }
     }
 }

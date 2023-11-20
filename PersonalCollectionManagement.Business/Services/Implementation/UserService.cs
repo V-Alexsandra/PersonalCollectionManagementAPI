@@ -109,7 +109,7 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
 
             if (!canLogin)
             {
-                throw new NotSucceededException("Your account is temporarily blocked. If you believe this was an error, please contact your administrator.");
+                throw new NotSucceededException("Your account is temporarily blocked. If you believe this was an error, please contact administrator.");
             }
 
             var result = await _userManager.CheckPasswordAsync(user, model.Password);
@@ -239,6 +239,21 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             var result = await _userManager.AddToRoleAsync(user, "User");
 
             return result.Succeeded;
+        }
+
+        public async Task<string> GetUserThemeAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+
+            return user.Theme;
+        }
+
+        public async Task<string> GetUserRoleAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            return currentRoles[0];
         }
     }
 }

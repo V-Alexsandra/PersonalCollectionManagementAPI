@@ -1,4 +1,5 @@
-﻿using PersonalCollectionManagement.Business.DTOs.ItemDtos;
+﻿using Microsoft.AspNetCore.Identity;
+using PersonalCollectionManagement.Business.DTOs.ItemDtos;
 using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
 using PersonalCollectionManagement.Data.Contexts;
@@ -13,16 +14,22 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         private readonly ITagRepository _tagRepository;
         private readonly IItemFieldValueRepository _itemFieldValueRepository;
         private readonly ICollectionFieldRepository _collectionFieldRepository;
+        private readonly ICollectionRepository _collectionRepository;
+        private readonly UserManager<UserEntity> _userManager;
 
-        public ItemService(IItemRepository itemRepository, 
-            ITagRepository tagRepository, 
+        public ItemService(IItemRepository itemRepository,
+            ITagRepository tagRepository,
             IItemFieldValueRepository itemFieldValueRepository,
-            ICollectionFieldRepository collectionFieldRepository)
+            ICollectionFieldRepository collectionFieldRepository,
+            ICollectionRepository collectionRepository,
+            UserManager<UserEntity> userManager)
         {
             _itemRepository = itemRepository;
             _tagRepository = tagRepository;
             _itemFieldValueRepository = itemFieldValueRepository;
             _collectionFieldRepository = collectionFieldRepository;
+            _collectionRepository = collectionRepository;
+            _userManager = userManager;
         }
 
         public async Task CreateItemAsync(ItemForCreationDto model)
@@ -94,7 +101,7 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
                 else
                 {
                     throw new NotSucceededException("Your value does not match the field type.");
-                } 
+                }
             }
         }
 
@@ -175,14 +182,104 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             return item;
         }
 
-        //public async Task UpdateItemAsync(ItemForUpdateDto model)
-        //{
-        //    throw await new NotImplementedException();
-        //}
-
         public async Task<IEnumerable<ItemEntity>> GetAllCollectionItemsAsync(int id)
         {
             return await _itemRepository.GetAllCollectionItemsAsync(id);
+        }
+
+        public async Task<IEnumerable<TagEntity>> GetAllTagsAsync()
+        {
+            return await _tagRepository.GetAllAsync();
+        }
+
+        public async Task UpdateItemAsync(ItemForUpdateDto model)
+        {
+            var item = await GetItemByIdAsync(model.Id);
+
+            item.Name = model.Name;
+
+            await _itemRepository.UpdateAsync(item);
+
+            foreach (ItemFieldValuesForUpdateDto value in model.ItemFieldValues)
+            {
+                var collectionField = await _collectionFieldRepository.GetByIdAsync(value.CollectionFieldId);
+
+                if (collectionField == null)
+                {
+                    throw new NotFoundException("Cannot found collection field.");
+                }
+
+                var itemFieldValue = await _itemFieldValueRepository.GetByIdAsync(value.Id); 
+
+                if (itemFieldValue == null)
+                {
+                    throw new NotFoundException("Cannot found item field value.");
+                }
+
+                if (IsValueOfType(value.Value, collectionField.Type))
+                {
+                    var newValue = value.Value;
+
+                    itemFieldValue.Value = newValue;
+                    
+                    await _itemFieldValueRepository.UpdateAsync(itemFieldValue);
+                }
+                else
+                {
+                    throw new NotSucceededException("Your value does not match the field type.");
+                }
+            }
+        }
+
+        public async Task UpdateTagsEntities(TagForUpdateDto tag)
+        {
+            var oldTag = await _tagRepository.GetByIdAsync(tag.Id);
+
+            if (oldTag == null)
+            {
+                throw new NotFoundException("Tag not found");
+            }
+
+            oldTag.Tag = tag.Tag;
+            
+            await _tagRepository.UpdateAsync(oldTag);
+        }
+
+        public async Task<IEnumerable<LastAddedItemForWiewDto>> GetLastAddedItemsAsync()
+        {
+            var lastAddedItems = await _itemRepository.GetLastAddedItemsAsync();
+
+            var lastAddedItemsForWiew = new List<LastAddedItemForWiewDto>(); 
+
+            foreach (var item in lastAddedItems)
+            {
+                var collection = await _collectionRepository.GetByIdAsync(item.CollectionId);
+
+                if (collection == null)
+                {
+                    throw new NotFoundException("Collection not found");
+                }
+
+                var author = await _userManager.FindByIdAsync(collection.UserId);
+
+                if(author == null)
+                {
+                    throw new NotFoundException("Author not found");
+                }
+
+                var lastAdded = new LastAddedItemForWiewDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    CollectionName = collection.Name,
+                    Author = await _userManager.GetUserNameAsync(author),
+                    CollectionId = item.CollectionId
+                };
+
+                lastAddedItemsForWiew.Add(lastAdded);
+            }
+
+            return lastAddedItemsForWiew;
         }
     }
 }

@@ -11,14 +11,17 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         private readonly ICollectionRepository _collectionRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly ICollectionFieldRepository _collectionFieldRepository;
+        private readonly IItemFieldValueRepository _itemFieldValueRepository;
 
         public CollectionService(ICollectionRepository collectionRepository,
             ITopicRepository topicRepository,
-            ICollectionFieldRepository collectionFieldRepository)
+            ICollectionFieldRepository collectionFieldRepository,
+            IItemFieldValueRepository itemFieldValueRepository)
         {
             _collectionRepository = collectionRepository;
             _topicRepository = topicRepository;
             _collectionFieldRepository = collectionFieldRepository;
+            _itemFieldValueRepository = itemFieldValueRepository;
         }
 
         public async Task<IEnumerable<CollectionEntity>> GetAllAsync()
@@ -116,9 +119,9 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             return largestCollections;
         }
 
-        public Task<IEnumerable<CollectionEntity>> GetAllUsersCollectionsAsync(string userId)
+        public async Task<IEnumerable<CollectionEntity>> GetAllUsersCollectionsAsync(string userId)
         {
-            var collections = _collectionRepository.GetAllUsersCollectionsAsync(userId);
+            var collections = await _collectionRepository.GetAllUsersCollectionsAsync(userId);
 
             if (collections == null)
             {
@@ -126,6 +129,70 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             }
 
             return collections;
+        }
+
+        public async Task<IEnumerable<CollectionFieldEntity>> GetAllFieldsAsync(int id)
+        {
+            var collectionFields = await _collectionFieldRepository.GetCollectionFieldsByCollectionIdAsync(id);
+
+            if (collectionFields == null)
+            {
+                throw new NotFoundException("Collection fields not found.");
+            }
+
+            return collectionFields;
+        }
+
+        public async Task<IEnumerable<ItemFieldValueEntity>> GetAllFieldValuesAsync(int id)
+        {
+            var values = await _itemFieldValueRepository.GetValueByFieldIdAsync(id);
+
+            if (values == null)
+            {
+                throw new NotFoundException("Fields values empty.");
+            }
+
+            return values;
+        }
+
+        public async Task UpdateCollectionAsync(CollectionForUpdateDto model)
+        {
+            var collection = await GetCollectionByIdAsync(model.Id);
+
+            await UpdateCollectionProperties(collection, model);
+
+            await _collectionRepository.UpdateAsync(collection);
+
+            foreach (CollectionFieldForUpdateDto field in model.Fields)
+            {
+                await UpdateCollectionFieldAsync(field);
+            }
+        }
+
+        private async Task UpdateCollectionProperties(CollectionEntity collection, CollectionForUpdateDto model)
+        {
+            collection.Name = model.Name;
+            collection.Description = model.Description;
+            collection.TopicId = await _topicRepository.GetIdByTopicAsync(model.Topic); 
+        }
+
+        private async Task UpdateCollectionFieldAsync(CollectionFieldForUpdateDto field)
+        {
+            var collectionField = await _collectionFieldRepository.GetByIdAsync(field.Id);
+
+            if (collectionField == null)
+            {
+                throw new NotFoundException("Field not found.");
+            }
+
+            UpdateCollectionFieldProperties(collectionField, field);
+            await _collectionFieldRepository.UpdateAsync(collectionField);
+        }
+
+        private void UpdateCollectionFieldProperties(CollectionFieldEntity collectionField, CollectionFieldForUpdateDto field)
+        {
+            collectionField.Name = field.Name;
+            collectionField.Type = field.Type;
         }
     }
 }

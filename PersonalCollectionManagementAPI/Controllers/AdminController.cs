@@ -184,5 +184,24 @@ namespace PersonalCollectionManagementAPI.Controllers
                 return StatusCode(500, "Internal Server Error.");
             }
         }
+
+        [HttpGet]
+        [Route("getrole/{id}")]
+        public async Task<IActionResult> GetUserRoleAsync(string id)
+        {
+            try
+            {
+                var role = await _userService.GetUserRoleAsync(id);
+                return Ok(role);
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
     }
 }

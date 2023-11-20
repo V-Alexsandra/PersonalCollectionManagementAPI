@@ -113,6 +113,25 @@ namespace PersonalCollectionManagementAPI.WebAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("gettheme")]
+        public async Task<IActionResult> GetUserThemeAsync(string id)
+        {
+            try
+            {
+                var theme = await _userService.GetUserThemeAsync(id);
+                return Ok(theme);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
         [HttpPut]
         [Route("language")]
         public async Task<IActionResult> ChangeUserLanguageAsync(string language, string id)
