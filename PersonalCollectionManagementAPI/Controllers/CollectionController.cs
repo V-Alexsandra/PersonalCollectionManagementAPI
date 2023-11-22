@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PersonalCollectionManagement.Business.DTOs.CollectionDtos;
 using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
@@ -20,7 +21,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPost]
         [Route("create")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> CreateCollectionAsync([FromBody] CollectionForCreationDto model)
         {
             try
@@ -48,7 +49,7 @@ namespace PersonalCollectionManagementAPI.Controllers
         {
             try
             {
-                var largestCollections = await _collectionService.GetFivaLargestAsync();
+                var largestCollections = await _collectionService.GetFiveLargestAsync();
 
                 return Ok(largestCollections);
             }
@@ -84,7 +85,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("alltopics")]
-        //[Autorize]
         public async Task<IActionResult> GetAllTopicsAsync()
         {
             try
@@ -100,7 +100,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("userscollections/{userId}")]
-        //[Autorize]
+        [Authorize]
         public async Task<IActionResult> GetAllUsersCollectionsAsync(string userId)
         {
             try
@@ -121,7 +121,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpDelete]
         [Route("delete/{id}")]
-        //[Autorize]
+        [Authorize]
         public async Task<IActionResult> DeleteCollectionAsync(int id, string userId)
         {
             try
@@ -237,13 +237,33 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("updatecollection")]
-        //[Autorize]
+        [Authorize]
         public async Task<IActionResult> UpdateCollectionAsync(CollectionForUpdateDto model)
         {
             try
             {
                 await _collectionService.UpdateCollectionAsync(model);
                 return Ok("Collection Updated.");
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpGet]
+        [Route("itemfieldvalues/{fieldId}/{itemId}")]
+        public async Task<IActionResult> GetItemFieldValuesAsync(int fieldId, int itemId)
+        {
+            try
+            {
+                var fieldValues = await _collectionService.GetItemFieldValuesAsync(fieldId, itemId);
+
+                return Ok(fieldValues);
             }
             catch (NotFoundException ex)
             {

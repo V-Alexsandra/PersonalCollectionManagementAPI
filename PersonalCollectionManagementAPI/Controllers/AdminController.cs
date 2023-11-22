@@ -7,7 +7,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -21,6 +20,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("allusers")]
+        [Authorize]
         public async Task<IActionResult> GetAllUsersAsync()
         {
             try
@@ -40,6 +40,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpDelete]
         [Route("delete/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUserAsync(string id)
         {
             try
@@ -59,6 +60,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("block/{id}")]
+        [Authorize]
         public async Task<IActionResult> BlockUserAsync(string id)
         {
             try
@@ -78,6 +80,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("unblock/{id}")]
+        [Authorize]
         public async Task<IActionResult> UnblockUserAsync(string id)
         {
             try
@@ -97,6 +100,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("roleadmin/{id}")]
+        [Authorize]
         public async Task<IActionResult> ChangeUserRoleToAdminAsync(string id)
         {
             try
@@ -123,6 +127,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("roleuser/{id}")]
+        [Authorize]
         public async Task<IActionResult> ChangeUserRoleToUserAsync(string id)
         {
             try
@@ -149,6 +154,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpDelete]
         [Route("deletetopic/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteTopicAsync(int id)
         {
             try

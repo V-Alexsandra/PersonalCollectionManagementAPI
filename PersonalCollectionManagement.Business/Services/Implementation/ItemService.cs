@@ -281,5 +281,15 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
 
             return lastAddedItemsForWiew;
         }
+
+        public async Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id)
+        {
+            return await _tagRepository.GetItemTagsAsync(id);
+        }
+
+        public async Task<IEnumerable<TagEntity>> GetUniqueTagsAsync()
+        {
+            return await _tagRepository.GetUniqueTagsAsync();
+        }
     }
 }

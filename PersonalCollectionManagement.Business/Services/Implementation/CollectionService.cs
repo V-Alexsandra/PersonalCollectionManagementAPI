@@ -107,9 +107,9 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
             return collecion;
         }
 
-        public async Task<IEnumerable<CollectionEntity>> GetFivaLargestAsync()
+        public async Task<IEnumerable<CollectionEntity>> GetFiveLargestAsync()
         {
-            var largestCollections = await _collectionRepository.GetFiveLargestAsync();
+            var largestCollections = await _collectionRepository.GetFiveLargestCollectionsAsync();
 
             if (largestCollections == null)
             {
@@ -193,6 +193,11 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         {
             collectionField.Name = field.Name;
             collectionField.Type = field.Type;
+        }
+
+        public async Task<IEnumerable<ItemFieldValueEntity>> GetItemFieldValuesAsync(int fieldId, int itemId)
+        {
+            return await _itemFieldValueRepository.GetItemValueByFieldIdAsync(fieldId, itemId);
         }
     }
 }

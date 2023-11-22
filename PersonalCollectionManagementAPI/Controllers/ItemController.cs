@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PersonalCollectionManagement.Business.DTOs.ItemDtos;
 using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
@@ -18,7 +19,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPost]
         [Route("create")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> CreateItemAsync([FromBody] ItemForCreationDto model)
         {
             try
@@ -66,7 +67,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("collectionitems/{id}")]
-        //[Autorize]
         public async Task<IActionResult> GetAllCollectionItemsAsync(int id)
         {
             try
@@ -87,7 +87,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpDelete]
         [Route("delete/{id}")]
-        //[Autorize]
+        [Authorize]
         public async Task<IActionResult> DeleteCollectionAsync(int id)
         {
             try
@@ -127,7 +127,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("alltags")]
-        //[Autorize]
         public async Task<IActionResult> GetAllTagsAsync()
         {
             try
@@ -143,7 +142,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("update")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> UpdateItemAsync([FromBody] ItemForUpdateDto model)
         {
             try
@@ -171,7 +170,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPut]
         [Route("updateTags")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> UpdateTagsAsync([FromBody] TagForUpdateDto model)
         {
             try
@@ -199,7 +198,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("getlastaddeditems")]
-        //[Authorize]
         public async Task<IActionResult> GetLastAddedItems()
         {
             try
@@ -210,6 +208,36 @@ namespace PersonalCollectionManagementAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("itemtags/{id}")]
+        public async Task<IActionResult> GetItemTagsAsync(int id)
+        {
+            try
+            {
+                var tags = await _itemService.GetItemTagsAsync(id);
+                return Ok(tags);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
+
+        [HttpGet]
+        [Route("uniquetags")]
+        public async Task<IActionResult> GetUniqueTagsAsync()
+        {
+            try
+            {
+                var tags = await _itemService.GetUniqueTagsAsync();
+                return Ok(tags);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
             }
         }
     }

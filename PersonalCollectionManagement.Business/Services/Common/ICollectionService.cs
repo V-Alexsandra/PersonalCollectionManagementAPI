@@ -9,11 +9,12 @@ namespace PersonalCollectionManagement.Business.Services.Common
         Task CreateCollectionAsync(CollectionForCreationDto model);
         Task<CollectionEntity> GetCollectionByIdAsync(int id);
         Task DeleteCollectionAsync(int id, string userId);
-        Task<IEnumerable<CollectionEntity>> GetFivaLargestAsync();
+        Task<IEnumerable<CollectionEntity>> GetFiveLargestAsync();
         Task<int> GetTopicIdAsync(string topic);
         Task<IEnumerable<CollectionEntity>> GetAllUsersCollectionsAsync(string userId);
         Task <IEnumerable<CollectionFieldEntity>> GetAllFieldsAsync(int id);
         Task<IEnumerable<ItemFieldValueEntity>> GetAllFieldValuesAsync(int id);
+        Task<IEnumerable<ItemFieldValueEntity>> GetItemFieldValuesAsync(int fieldId, int itemId);
         Task UpdateCollectionAsync(CollectionForUpdateDto model);
     }
 }

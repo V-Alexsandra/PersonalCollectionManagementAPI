@@ -19,5 +19,14 @@ namespace PersonalCollectionManagement.Data.Repositories.Implementation
                .Where(f => f.CollectionFieldId == id)
                .ToListAsync();
         }
+
+        public async Task<IEnumerable<ItemFieldValueEntity>> GetItemValueByFieldIdAsync(int fieldId, int itemId)
+        {
+            return await DbSet
+               .AsNoTracking()
+               .Where(f => f.CollectionFieldId == fieldId)
+               .Where(f => f.ItemId == itemId)
+               .ToListAsync();
+        }
     }
 }

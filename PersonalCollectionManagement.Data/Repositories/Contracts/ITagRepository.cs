@@ -4,5 +4,7 @@ namespace PersonalCollectionManagement.Data.Repositories.Contracts
 {
     public interface ITagRepository : IBaseRepository<TagEntity>
     {
+        Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id);
+        Task<IEnumerable<TagEntity>> GetUniqueTagsAsync();
     }
 }

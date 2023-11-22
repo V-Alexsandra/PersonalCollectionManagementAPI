@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PersonalCollectionManagement.Business.DTOs.LikeDtos;
 using PersonalCollectionManagement.Business.Services.Common;
 
@@ -17,7 +18,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("count/{itemId}")]
-        //[Authorize]
         public async Task<IActionResult> CountLikesAsync(int itemId)
         {
             try
@@ -33,7 +33,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPost]
         [Route("like")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> LikeAsync([FromBody] LikeForCreationDto model)
         {
             try

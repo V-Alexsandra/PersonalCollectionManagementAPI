@@ -76,7 +76,6 @@ namespace PersonalCollectionManagementAPI.WebAPI.Controllers
 
         [HttpGet]
         [Route("profile/{id}")]
-        [Authorize]
         public async Task<IActionResult> GetUserProfile(string id)
         {
             try

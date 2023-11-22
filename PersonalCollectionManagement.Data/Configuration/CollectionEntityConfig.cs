@@ -21,7 +21,7 @@ namespace PersonalCollectionManagement.Data.Configuration
             builder.HasOne(c => c.User)
                 .WithMany(u => u.Collections)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PersonalCollectionManagement.Business.DTOs.CommentDtos;
 using PersonalCollectionManagement.Business.DTOs.ItemDtos;
 using PersonalCollectionManagement.Business.Exceptions;
@@ -20,7 +21,7 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpPost]
         [Route("create")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> CreateCommentAsync([FromBody] CommentForCreationDto model)
         {
             try
@@ -36,7 +37,6 @@ namespace PersonalCollectionManagementAPI.Controllers
 
         [HttpGet]
         [Route("getcomments/{id}")]
-        //[Authorize]
         public async Task<IActionResult> GetItemCommentsAsync(int id)
         {
             try

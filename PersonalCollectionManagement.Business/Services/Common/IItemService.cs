@@ -18,7 +18,9 @@ namespace PersonalCollectionManagement.Business.Services.Common
         Task DeleteItemnAsync(int id);
         Task<IEnumerable<ItemEntity>> GetAllCollectionItemsAsync(int id);
         Task<IEnumerable<TagEntity>> GetAllTagsAsync();
+        Task<IEnumerable<TagEntity>> GetUniqueTagsAsync();
         Task UpdateTagsEntities(TagForUpdateDto tag);
         Task<IEnumerable<LastAddedItemForWiewDto>> GetLastAddedItemsAsync();
+        Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id);
     }
 }

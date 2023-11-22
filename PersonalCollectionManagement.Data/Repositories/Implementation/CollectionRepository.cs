@@ -9,21 +9,10 @@ namespace PersonalCollectionManagement.Data.Repositories.Implementation
     {
         protected IApplicationDbContext appContext;
         protected DbSet<CollectionEntity> DbSet;
-        public CollectionRepository(IApplicationDbContext appContext) : base(appContext) 
+        public CollectionRepository(IApplicationDbContext appContext) : base(appContext)
         {
+            this.appContext = appContext;
             DbSet = appContext.Set<CollectionEntity>();
-        }
-
-        public async Task<IEnumerable<CollectionEntity>> GetFiveLargestAsync()
-        {
-            var largestCollections = await DbSet
-                .AsNoTracking()
-                .Include(c => c.Items)
-                .OrderByDescending(c => c.Items.Count())
-                .Take(5)
-                .ToListAsync();
-
-            return largestCollections;
         }
 
         public async Task<IEnumerable<CollectionEntity>> GetAllUsersCollectionsAsync(string userId)
@@ -34,6 +23,21 @@ namespace PersonalCollectionManagement.Data.Repositories.Implementation
                 .ToListAsync();
 
             return usersCollections;
+        }
+
+        public async Task<IEnumerable<CollectionEntity>> GetFiveLargestCollectionsAsync()
+        {
+                var collectionsWithItemCount = await DbSet
+                    .Select(c => new
+                    {
+                        Collection = c,
+                        ItemCount = appContext.Items.Count(i => i.CollectionId == c.Id)
+                    })
+                    .OrderByDescending(x => x.ItemCount)
+                    .Take(5)
+                    .ToListAsync();
+
+                return collectionsWithItemCount.Select(x => x.Collection);
         }
     }
 }
