@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using PersonalCollectionManagement.Business.DTOs.CommentDtos;
-using PersonalCollectionManagement.Business.DTOs.ItemDtos;
-using PersonalCollectionManagement.Business.Exceptions;
 using PersonalCollectionManagement.Business.Services.Common;
-using PersonalCollectionManagement.Business.Services.Implementation;
+using PersonalCollectionManagementAPI.Hubs;
 
 namespace PersonalCollectionManagementAPI.Controllers
 {
@@ -13,10 +12,12 @@ namespace PersonalCollectionManagementAPI.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ICommentService _commentService;
+        private readonly IHubContext<CommentHub> _commentHubContext;
 
-        public CommentController(ICommentService commentService)
+        public CommentController(ICommentService commentService, IHubContext<CommentHub> commentHubContext)
         {
             _commentService = commentService;
+            _commentHubContext = commentHubContext;
         }
 
         [HttpPost]
@@ -27,6 +28,7 @@ namespace PersonalCollectionManagementAPI.Controllers
             try
             {
                 await _commentService.CreateCommentAsync(model);
+                await _commentHubContext.Clients.All.SendAsync("ReceiveComments", model.ItemId);
                 return Ok("Comment created.");
             }
             catch (Exception ex)

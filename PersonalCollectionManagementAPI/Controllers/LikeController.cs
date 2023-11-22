@@ -1,19 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using PersonalCollectionManagement.Business.DTOs.LikeDtos;
 using PersonalCollectionManagement.Business.Services.Common;
+using PersonalCollectionManagementAPI.Hubs;
 
 namespace PersonalCollectionManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class LikeController : ControllerBase
     {
         private readonly ILikeService _likeService;
+        private readonly IHubContext<LikeHub> _likeHubContext;
 
-        public LikeController(ILikeService likeService)
+        public LikeController(ILikeService likeService, IHubContext<LikeHub> likeHubContext)
         {
             _likeService = likeService;
+            _likeHubContext = likeHubContext;
         }
 
         [HttpGet]
@@ -39,6 +43,9 @@ namespace PersonalCollectionManagementAPI.Controllers
             try
             {
                 await _likeService.Like(model);
+
+                await _likeHubContext.Clients.All.SendAsync("ReceiveLikeCount", model.ItemId);
+
                 return Ok();
             }
             catch (Exception ex)
