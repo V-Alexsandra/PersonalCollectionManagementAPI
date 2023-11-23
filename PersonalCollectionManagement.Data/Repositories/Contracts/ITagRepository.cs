@@ -6,5 +6,6 @@ namespace PersonalCollectionManagement.Data.Repositories.Contracts
     {
         Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id);
         Task<IEnumerable<TagEntity>> GetUniqueTagsAsync();
+        Task<List<int>> GetItemsIdByTag(string tag);
     }
 }

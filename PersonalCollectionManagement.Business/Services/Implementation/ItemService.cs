@@ -248,38 +248,54 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         public async Task<IEnumerable<LastAddedItemForWiewDto>> GetLastAddedItemsAsync()
         {
             var lastAddedItems = await _itemRepository.GetLastAddedItemsAsync();
-
-            var lastAddedItemsForWiew = new List<LastAddedItemForWiewDto>(); 
+            var lastAddedItemsForWiew = new List<LastAddedItemForWiewDto>();
 
             foreach (var item in lastAddedItems)
             {
-                var collection = await _collectionRepository.GetByIdAsync(item.CollectionId);
-
-                if (collection == null)
-                {
-                    throw new NotFoundException("Collection not found");
-                }
-
-                var author = await _userManager.FindByIdAsync(collection.UserId);
-
-                if(author == null)
-                {
-                    throw new NotFoundException("Author not found");
-                }
-
-                var lastAdded = new LastAddedItemForWiewDto
-                {
-                    Id = item.Id,
-                    Name = item.Name,
-                    CollectionName = collection.Name,
-                    Author = await _userManager.GetUserNameAsync(author),
-                    CollectionId = item.CollectionId
-                };
-
+                var lastAdded = await CreateLastAddedItemForWiewDto(item);
                 lastAddedItemsForWiew.Add(lastAdded);
             }
 
             return lastAddedItemsForWiew;
+        }
+
+        private async Task<LastAddedItemForWiewDto> CreateLastAddedItemForWiewDto(ItemEntity item)
+        {
+            var collection = await GetCollectionById(item.CollectionId);
+            var author = await GetUserById(collection.UserId);
+
+            return new LastAddedItemForWiewDto
+            {
+                Id = item.Id,
+                Name = item.Name,
+                CollectionName = collection.Name,
+                Author = await _userManager.GetUserNameAsync(author),
+                CollectionId = item.CollectionId
+            };
+        }
+
+        private async Task<CollectionEntity> GetCollectionById(int collectionId)
+        {
+            var collection = await _collectionRepository.GetByIdAsync(collectionId);
+
+            if (collection == null)
+            {
+                throw new NotFoundException("Collection not found");
+            }
+
+            return collection;
+        }
+
+        private async Task<UserEntity> GetUserById(string userId)
+        {
+            var author = await _userManager.FindByIdAsync(userId);
+
+            if (author == null)
+            {
+                throw new NotFoundException("Author not found");
+            }
+
+            return author;
         }
 
         public async Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id)
@@ -290,6 +306,36 @@ namespace PersonalCollectionManagement.Business.Services.Implementation
         public async Task<IEnumerable<TagEntity>> GetUniqueTagsAsync()
         {
             return await _tagRepository.GetUniqueTagsAsync();
+        }
+
+        public async Task<IEnumerable<TagsItemForWiewDto>> GetItemsByTags(string tag)
+        {
+            var items = new List<TagsItemForWiewDto>();
+            var itemIds = await _tagRepository.GetItemsIdByTag(tag);
+
+            foreach (var itemId in itemIds)
+            {
+                var currentItem = await _itemRepository.GetByIdAsync(itemId);
+                var tagsItem = await CreateTagsItemForWiewDto(currentItem);
+                items.Add(tagsItem);
+            }
+
+            return items;
+        }
+
+        private async Task<TagsItemForWiewDto> CreateTagsItemForWiewDto(ItemEntity currentItem)
+        {
+            var collection = await GetCollectionById(currentItem.CollectionId);
+            var author = await GetUserById(collection.UserId);
+
+            return new TagsItemForWiewDto
+            {
+                Id = currentItem.Id,
+                Name = currentItem.Name,
+                CollectionName = collection.Name,
+                Author = await _userManager.GetUserNameAsync(author),
+                CollectionId = currentItem.CollectionId
+            };
         }
     }
 }

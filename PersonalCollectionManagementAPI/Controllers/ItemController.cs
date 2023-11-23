@@ -240,5 +240,20 @@ namespace PersonalCollectionManagementAPI.Controllers
                 return StatusCode(500, "Internal Server Error.");
             }
         }
+
+        [HttpGet]
+        [Route("getitemsbytag")]
+        public async Task<IActionResult> GetItemsByTag(string tag)
+        {
+            try
+            {
+                var items = await _itemService.GetItemsByTags(tag);
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error.");
+            }
+        }
     }
 }

@@ -14,6 +14,16 @@ namespace PersonalCollectionManagement.Data.Repositories.Implementation
             DbSet = appContext.Set<TagEntity>();
         }
 
+        public async Task<List<int>> GetItemsIdByTag(string tag)
+        {
+            var itemIds = await DbSet
+                .Where(t => t.Tag == tag)
+                .Select(t => t.ItemId)
+                .ToListAsync();
+
+            return itemIds;
+        }
+
         public async Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id)
         {
             return await DbSet

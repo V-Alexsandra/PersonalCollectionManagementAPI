@@ -22,5 +22,6 @@ namespace PersonalCollectionManagement.Business.Services.Common
         Task UpdateTagsEntities(TagForUpdateDto tag);
         Task<IEnumerable<LastAddedItemForWiewDto>> GetLastAddedItemsAsync();
         Task<IEnumerable<TagEntity>> GetItemTagsAsync(int id);
+        Task<IEnumerable<TagsItemForWiewDto>> GetItemsByTags(string tag);
     }
 }
